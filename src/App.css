@@ -1,38 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Source+Sans+Pro&family=Work+Sans&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  color: #808080;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  margin: 0 auto;
+  width: calc(100% - 40px);
+}
+
 .App {
-  text-align: center;
+  text-align: left;
+}
+
+ul, li {
+  cursor: pointer;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+}
+
+.selected {
+  color: #61dafb;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  height: 40px;
+  /* pointer-events: none; */
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background: #0064EB;
+ 
+  /* font-size: calc(10px + 2vmin); */
   color: white;
+}
+
+.header-menu {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
 }
 
 .App-link {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+/* input */
+
+.search-field {
+  display: flex;
+  height: 2.5rem;
+  flex: 0 1 36.6%;
+  align-items: center;
+  background-color: #fff;
+  padding-left: 1.25rem;
+  border-radius: 0.5rem;
+}
+
+input[type="search"] {
+  border-style: hidden;
+  font-family: inherit; /* 1 */
+  font-size: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  margin: 0; /* 2 */
+}
+
+.search-field-input {
+  display: block;
+  width: 100%;
+  padding: 0 0.7rem;
+  /* max-width: 31.25rem;
+  height: calc(2.25rem + 2px);
+  padding: 0.375rem 0.75rem; */
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.21;
+  color: #212529;
+  background-color: #fff;
+  outline: none;
+  /* background-clip: padding-box; */
+  /* border: 1px solid #bdbdbd; */
+  
+  /* transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; */
+  
+}
+
+/* initial page */
+
+.initial-page-wrapper {
+  min-height: calc(100vh - 74px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.initial-page-content {
+  max-width: 13rem;
+  text-align: center;
+}
+
+.initial-page-content h2 {
+  padding-top: 2.93rem;
+  font-size: 1.375rem;
+  font-family: 'Inter';
+ font-weight: 400;
+ line-height: 1.925rem;
+}
+
+/* MainPage */
+
+.main {
+  background: #F9F9F9;
+}
+
+.main-page-wrapper {
+  max-width: 18.25rem;
+}
+
+.main-page-image {
+  width: 17.5rem;
+  height: 17.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.main-page-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.main-page-wrapper h2 {
+  padding-top: 1.75rem;
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 2.125rem;
+  color: #000;
+}
+
+.main-page-wrapper h3 {
+  padding-top: 0.75rem;
+  font-size: 1.125rem;
+  line-height: 1.356rem;
+  color: #0064EB;
+}
+
+.main-page-follow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.page-wrapper {
+  
+  display: flex;
+  gap: 5.3rem;
+}
+
+.page-wrapper ul li {
+  margin-top: 1.5rem;
+  padding: 1.5rem 2rem;
+  background-color: #fff;
+  border-radius: 0.5rem; 
+  transition: all 0.3s ease;
+}
+
+.page-wrapper ul li:hover {
+  box-shadow: 0px 4px 35px 0px rgba(168, 172, 176, 0.19);
+}
+
+.page-wrapper ul li p {
+  margin-bottom: 1rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  color: #0064EB;
+  font-family: 'Inter';
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.81rem;
+}
+
+
+.repositories h2{
+  font-family: 'Inter';
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 2.625rem;
+  color: #000;
 }
