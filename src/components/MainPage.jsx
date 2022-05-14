@@ -1,23 +1,36 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import EmptyPage from "./EmptyPage";
+//import EmptyPage from "./EmptyPage";
 
 function MainPage(props) {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [context, setContext] = useState([]);
-  const [selectedUser, setSelectedUser] = useState();
-  //   console.log(context);
-  // Note: the empty deps array [] means
-  // this useEffect will run once
-  // similar to componentDidMount()
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState([]);
+  console.log(page);
 
   useEffect(() => {
-    console.log("sync title");
-    if (selectedUser) {
-      document.title = selectedUser.login;
-    }
-  }, [selectedUser]);
+    fetch(
+      `https://api.github.com/users/${props.search}/repos?per_page=5&page=${page}`
+    )
+      .then((res) => (res.status === 200 ? res.json() : setError(true)))
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setItems(result);
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+  }, [page, props.search]);
 
   useEffect(() => {
     console.log(props.search);
@@ -27,7 +40,6 @@ function MainPage(props) {
         (result) => {
           setIsLoaded(true);
           setContext(result);
-          console.log(result);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -38,45 +50,69 @@ function MainPage(props) {
         }
       );
   }, [props.search]);
-  console.log(context);
-  //console.log(selectedUser);
+  console.log(items);
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <>
-        <div className="main-page-wrapper">
-          <div className="main-page-image">
-            <img src={context.avatar_url} alt="avatar" />
-          </div>
-          <h2>{context.name}</h2>
-          <h3>{context.login}</h3>
-          <div className="main-page-follow">
-            <p>{context.followers} followers</p>
-            <p>{context.following} following</p>
-          </div>
-          <ul>
-            {/* {context.map(({ login, id }) => (
-            <li
-              key={id}
-              onClick={() => {
-                setSelectedUser(login);
-              }}
-            >
-              {login}
-            </li>
-          ))} */}
-            {/* {context.map(({ user }) => {
-            return <li key={user.id}>{user.login}</li>;
-          })} */}
-          </ul>
-        </div>
-      </>
-    );
+  let pagesSise = 5;
+  let pagesCount = Math.ceil(context.public_repos / pagesSise);
+  const pages = [];
+  for (let i = 1; i <= pagesCount; i++) {
+    pages.push(i);
   }
+
+  console.log(pages);
+
+  // if (error) {
+  //   return <div>{error.message}</div>;
+  // } else if (!isLoaded) {
+  //   return <div>Loading...</div>;
+  // } else {
+  return (
+    <div className="container">
+      {!error ? (
+        <div>
+          <div className="page-wrapper">
+            <div className="main-page-wrapper">
+              <div className="main-page-image">
+                <img src={context.avatar_url} alt="avatar" />
+              </div>
+              <h2>{context.name}</h2>
+              <h3>{context.login}</h3>
+              <div className="main-page-follow">
+                <p>{context.followers} followers</p>
+                <p>{context.following} following</p>
+              </div>
+            </div>
+            <div className="repositories">
+              <h2>Repositories ({context.public_repos})</h2>
+              <ul>
+                {items.map((item) => (
+                  <li key={item.id}>
+                    <a href={item.html_url}>
+                      <p>{item.name}</p>
+                      {item.description}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="page-wrapper-pagination">
+            <nav className="pagination">
+              <h3>5-8 of {context.public_repos} items</h3>
+              {pages.map((p) => (
+                <button key={p} onClick={() => setPage(p)}>
+                  {p}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      ) : (
+        <EmptyPage />
+      )}
+    </div>
+  );
 }
+// }
 
 export default MainPage;

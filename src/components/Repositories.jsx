@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import EmptyPage from "./EmptyPage";
 
 function Repositories(props) {
   const [error, setError] = useState(null);
@@ -9,8 +10,8 @@ function Repositories(props) {
   // this useEffect will run once
   // similar to componentDidMount()
   useEffect(() => {
-    fetch(`https://api.github.com/users/${props.search}/repos`)
-      .then((res) => res.json())
+    fetch(`https://api.github.com/users/${props.search}/repos?per_page=10`)
+      .then((res) => (res.status === 200 ? res.json() : setError("err")))
       .then(
         (result) => {
           setIsLoaded(true);
@@ -25,28 +26,32 @@ function Repositories(props) {
         }
       );
   }, [props.search]);
+  console.log(error);
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // } else if (!isLoaded) {
+  //   return <div>Loading...</div>;
+  // } else {
+  return (
+    <div className="repositories">
+      {/* <h2>Repositories</h2> */}
 
-  console.log(items);
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <div className="repositories">
-        <h2>Repositories {items.length}</h2>
+      {error ? (
+        <EmptyPage />
+      ) : (
         <ul>
           {items.map((item) => (
             <li key={item.id}>
-              <p>{item.name}</p>
-              {item.description}
+              <a href={item.html_url}>
+                <p>{item.name}</p>
+                {item.description}
+              </a>
             </li>
           ))}
         </ul>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
 
 export default Repositories;

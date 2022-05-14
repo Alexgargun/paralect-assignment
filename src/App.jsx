@@ -6,12 +6,13 @@ import searchIcon from "./assets/svg/search-icon.svg";
 import InitialPage from "./components/InitialPage";
 import pageSearch from "./assets/svg/initial-page-search.svg";
 import MainPage from "./components/MainPage";
-import EmptyPage from "./components/EmptyPage";
+//import EmptyPage from "./components/EmptyPage";
 import { useState } from "react";
 import Repositories from "./components/Repositories";
 
 const App = () => {
-  const [tempsearch, setTempsearch] = useState("alexgargun");
+  const [tempsearch, setTempsearch] = useState("");
+
   console.log(tempsearch);
   return (
     <div className="App">
@@ -23,11 +24,10 @@ const App = () => {
               <img src={searchIcon} alt="search-icon" />
               <input
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && e.target.value) {
                     setTempsearch(e.target.value);
                   }
                 }}
-                //onChange={(e) => setTempsearch(e.target.value)}
                 className="search-field-input"
                 type="search"
                 placeholder="Enter GitHub username"
@@ -44,15 +44,17 @@ const App = () => {
         </div>
       </header>
       <main className="main">
-        <div className="container">
-          <InitialPage pageSearch={pageSearch} />
-          <div className="page-wrapper">
-            <MainPage search={tempsearch} />
-            <Repositories search={tempsearch} />
-          </div>
+        {/* <div className="container"> */}
+        {tempsearch ? (
+          <MainPage search={tempsearch} />
+        ) : (
+          <InitialPage pageSearchIcon={pageSearch} />
+        )}
 
-          <EmptyPage />
-        </div>
+        {/* {tempsearch ? <Repositories search={tempsearch} /> : null} */}
+
+        {/* <EmptyPage /> */}
+        {/* </div> */}
       </main>
     </div>
   );
