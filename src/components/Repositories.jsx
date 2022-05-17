@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import EmptyPage from "./EmptyPage";
 
 function Repositories(props) {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [items, setItems] = useState([]);
 
@@ -11,20 +11,22 @@ function Repositories(props) {
   // similar to componentDidMount()
   useEffect(() => {
     fetch(`https://api.github.com/users/${props.search}/repos?per_page=10`)
-      .then((res) => (res.status === 200 ? res.json() : setError("err")))
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
+      .then((res) => {
+        if (!res.ok) {
+          throw Error("could not fetch");
         }
-      );
+        return res.json();
+      })
+
+      .then((result) => {
+        setIsLoaded(true);
+        setItems(result);
+        setError(false);
+      })
+      // Note: it's important to handle errors here
+      // instead of a catch() block so that we don't swallow
+      // exceptions from actual bugs in components.
+      .catch((err) => setError(err.message));
   }, [props.search]);
   console.log(error);
   // if (error) {
@@ -34,8 +36,6 @@ function Repositories(props) {
   // } else {
   return (
     <div className="repositories">
-      {/* <h2>Repositories</h2> */}
-
       {error ? (
         <EmptyPage />
       ) : (

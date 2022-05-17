@@ -2,10 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import EmptyPage from "./EmptyPage";
-//import EmptyPage from "./EmptyPage";
 
 function MainPage(props) {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [context, setContext] = useState([]);
   const [items, setItems] = useState([]);
@@ -16,11 +15,17 @@ function MainPage(props) {
     fetch(
       `https://api.github.com/users/${props.search}/repos?per_page=5&page=${page}`
     )
-      .then((res) => (res.status === 200 ? res.json() : setError(true)))
+      .then((res) => {
+        if (!res.ok) {
+          throw Error("could not fetch");
+        }
+        return res.json();
+      })
       .then(
         (result) => {
           setIsLoaded(true);
           setItems(result);
+          setError(null);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -35,11 +40,17 @@ function MainPage(props) {
   useEffect(() => {
     console.log(props.search);
     fetch(` https://api.github.com/users/${props.search}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw Error("could not fetch");
+        }
+        return res.json();
+      })
       .then(
         (result) => {
           setIsLoaded(true);
           setContext(result);
+          setError(null);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -48,7 +59,8 @@ function MainPage(props) {
           setIsLoaded(true);
           setError(error);
         }
-      );
+      )
+      .catch((err) => setError(err.message));
   }, [props.search]);
   console.log(items);
 
@@ -59,16 +71,25 @@ function MainPage(props) {
     pages.push(i);
   }
 
-  console.log(pages);
+  // console.log(pages);
+  // if(error) {
+  //   setError(false)
 
+  // }
   // if (error) {
   //   return <div>{error.message}</div>;
-  // } else if (!isLoaded) {
-  //   return <div>Loading...</div>;
-  // } else {
+  // } else
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+  // else {
+
+  console.log(error);
   return (
     <div className="container">
-      {!error ? (
+      {error ? (
+        <EmptyPage />
+      ) : (
         <div>
           <div className="page-wrapper">
             <div className="main-page-wrapper">
@@ -107,8 +128,6 @@ function MainPage(props) {
             </nav>
           </div>
         </div>
-      ) : (
-        <EmptyPage />
       )}
     </div>
   );
