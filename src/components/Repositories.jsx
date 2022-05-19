@@ -1,57 +1,100 @@
-import { useState, useEffect } from "react";
-import EmptyPage from "./EmptyPage";
+import React, { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
 
-function Repositories(props) {
-  const [error, setError] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [items, setItems] = useState([]);
+function getGitHubPageCount(response) {
+  const REGEX_GITHUB_HEADER_LINK = /<\S*\&page=(\d)>; rel="last"/gm;
+  // Extract pageCount from Link header.
+  return Number(REGEX_GITHUB_HEADER_LINK.exec(response.headers.get("Link"))[1]);
+}
 
-  // Note: the empty deps array [] means
-  // this useEffect will run once
-  // similar to componentDidMount()
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${props.search}/repos?per_page=10`)
-      .then((res) => {
-        if (!res.ok) {
-          throw Error("could not fetch");
-        }
-        return res.json();
-      })
+// Actual React-Paginate example.
+// https://github.com/AdeleD/react-paginate
 
-      .then((result) => {
-        setIsLoaded(true);
-        setItems(result);
-        setError(false);
-      })
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      .catch((err) => setError(err.message));
-  }, [props.search]);
-  console.log(error);
-  // if (error) {
-  //   return <div>Error: {error.message}</div>;
-  // } else if (!isLoaded) {
-  //   return <div>Loading...</div>;
-  // } else {
+function Repositories({ repositories, className }) {
+  if (repositories.length === 0) {
+    return (
+      <div className="alert alert-warning" role="alert">
+        No results.
+      </div>
+    );
+  }
+  // TODO Format with https://getbootstrap.com/docs/5.1/components/card/
+  //   https://getbootstrap.com/docs/5.1/components/list-group/
   return (
-    <div className="repositories">
-      {error ? (
-        <EmptyPage />
-      ) : (
-        <ul>
-          {items.map((item) => (
-            <li key={item.id}>
-              <a href={item.html_url}>
-                <p>{item.name}</p>
-                {item.description}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className={className}>
+      {repositories.map((repository) => (
+        <div className="repository-entry">
+          <h4>{repository.name}</h4>
+        </div>
+      ))}
     </div>
   );
 }
 
-export default Repositories;
+function PaginateDemoApp({ orgName, perPage }) {
+  const [repositories, setRepositories] = useState([]);
+  const [pageOffset, setPageOffset] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [apiError, setApiError] = useState(null);
+
+  useEffect(async () => {
+    const response = await fetch(
+      `https://api.github.com/orgs/${orgName}/repos?${new URLSearchParams({
+        per_page: perPage,
+        page: pageOffset,
+      })}`
+    );
+    const responseJson = await response.json();
+    if (!response.ok) {
+      setApiError(responseJson.message);
+      setRepositories([]);
+      setPageCount(0);
+      return;
+    }
+    const newPageCount = getGitHubPageCount(response);
+    console.log(responseJson, newPageCount);
+    setRepositories(responseJson);
+    setPageCount(newPageCount);
+  }, [pageOffset, perPage]);
+
+  const handlePageChange = (event) => {
+    console.log(event);
+    // TODO Only change displayed selected page
+    // when its content is loaded in useEffect.
+    setPageOffset(event.selected);
+  };
+
+  return (
+    <div style={{ marginTop: "1rem" }}>
+      <h3 className="repo-title">{orgName} GitHub repositories</h3>
+      {apiError && (
+        <div className="alert alert-danger" role="alert">
+          {apiError}
+        </div>
+      )}
+      <Repositories className="listing" repositories={repositories} />
+      <ReactPaginate
+        previousLabel="Previous"
+        nextLabel="Next"
+        pageClassName="page-item"
+        pageLinkClassName="page-link"
+        previousClassName="page-item"
+        previousLinkClassName="page-link"
+        nextClassName="page-item"
+        nextLinkClassName="page-link"
+        breakLabel="..."
+        breakClassName="page-item"
+        breakLinkClassName="page-link"
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageChange}
+        containerClassName="pagination"
+        activeClassName="active"
+        forcePage={pageOffset}
+      />
+    </div>
+  );
+}
+
+export default PaginateDemoApp;

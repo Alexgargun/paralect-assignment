@@ -161,7 +161,7 @@ input[type="search"] {
   color: #000;
 }
 
-.main-page-wrapper h3 {
+.main-page-wrapper a {
   padding-top: 0.75rem;
   font-size: 1.125rem;
   line-height: 1.356rem;
@@ -215,10 +215,10 @@ input[type="search"] {
 /* pagination */
 
 .page-wrapper-pagination {
-  border: 1px dashed black;
-  
   display: flex;
   justify-content: flex-end;
+  padding: 1.5rem 0;
+  gap: 1rem;
 }
 
 
@@ -230,20 +230,50 @@ input[type="search"] {
   gap: 1rem;
 }
 
-.pagination button {
+.pagination-button {
   padding: 2px 6px;
   min-height: 1.5rem;
 }
 
-.pagination button:hover   {
+.button-selected   {
+  border-radius: 3px;
   background-color: #0064EB;
   color: #fff;
+  
 }
 
-.pagination::before {
-  content: url(./assets/svg/arrow-left.svg);  
+.previous, .next {
+  display: flex;
+  align-items: center;
 }
 
-.pagination::after {
-  content: url(./assets/svg/arrow-right.svg); 
+.prev-button {
+  content: url(./assets/svg/arrow-left.svg);
+  filter: invert(53%) sepia(1%) saturate(0%) hue-rotate(75deg) brightness(95%) contrast(87%);
+ }
+
+.prev-button:hover {
+  filter: invert(25%) sepia(98%) saturate(3159%) hue-rotate(204deg) brightness(94%) contrast(108%);
+}
+ 
+.next-button {
+  content: url(./assets/svg/arrow-right.svg);
+  
+}  
+
+.next-button:hover {
+  filter: invert(25%) sepia(98%) saturate(3159%) hue-rotate(204deg) brightness(94%) contrast(108%);
+}
+
+@media screen and (max-width: 48rem) {
+  .page-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-wrapper-pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }
