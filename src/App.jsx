@@ -1,17 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import logo from "./assets/svg/Logo.svg";
 import searchIcon from "./assets/svg/search-icon.svg";
 import InitialPage from "./components/InitialPage";
 import pageSearch from "./assets/svg/initial-page-search.svg";
 import MainPage from "./components/MainPage";
-import arrowLeft from "./assets/svg/arrow-left.svg";
-import { useState } from "react";
 
 const App = () => {
   const [tempsearch, setTempsearch] = useState("");
 
-  console.log(tempsearch);
   return (
     <div className="App">
       <header className="App-header">
@@ -36,9 +33,12 @@ const App = () => {
       </header>
       <main className="main">
         {tempsearch ? (
-          <MainPage search={tempsearch} arrowLeft={arrowLeft} />
+          <MainPage search={tempsearch} />
         ) : (
-          <InitialPage pageSearchIcon={pageSearch} />
+          <InitialPage
+            pageIcon={pageSearch}
+            textContent="Start with searching a GitHub user"
+          />
         )}
       </main>
     </div>

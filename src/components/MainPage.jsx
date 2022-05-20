@@ -1,23 +1,19 @@
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
-import EmptyPage from "./EmptyPage";
+import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
-import PaginatedItems from "./PaginatedItems";
+import userIcon from "../assets/svg/user.svg";
 import followers from "../assets/svg/folovers.svg";
 import following from "../assets/svg/foloving.svg";
-
-let pagesSise = 4;
+import InitialPage from "./InitialPage";
 
 function MainPage({ search }) {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [context, setContext] = useState([]);
   const [items, setItems] = useState([]);
-  //const [page, setPage] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [pageOffset, setPageOffset] = useState(1);
-  console.log(pageOffset);
+  const [itemsOfTotalStart, setItemsOfTotalStart] = useState(0);
+  const pagesSise = 4;
 
   useEffect(() => {
     fetch(
@@ -34,6 +30,7 @@ function MainPage({ search }) {
           setIsLoaded(true);
           setItems(result);
           setError(null);
+          setItemsOfTotalStart(pagesSise * pageOffset - 4);
         },
 
         (error) => {
@@ -66,44 +63,27 @@ function MainPage({ search }) {
       )
       .catch((err) => setError(err.message));
   }, [search, pageCount]);
-  console.log(pageCount);
-
-  let pagesCount = Math.ceil(context.public_repos / pagesSise);
-  const pages = [];
-  for (let i = 1; i <= pagesCount; i++) {
-    pages.push(i);
-  }
-  console.log(pages);
-
-  let itemsOfTotalEnd = pagesSise * pageOffset;
-  if (itemsOfTotalEnd > context.public_repos) {
-    itemsOfTotalEnd = context.public_repos;
-  }
-  const itemsOfTotalStart = itemsOfTotalEnd - (pagesSise - 1);
 
   const handlePageClick = (event) => {
     setPageOffset(event.selected + 1);
   };
 
-  // console.log(pages);
-  // if(error) {
-  //   setError(false)
-
-  // }
-  // if (error) {
-  //   return <div>{error.message}</div>;
-  // } else
   if (!isLoaded) {
     return <div>Loading...</div>;
+  }
+
+  let pageWrapperClass = "page-wrapper";
+  if (items.length === 0) {
+    pageWrapperClass += " empty";
   }
 
   return (
     <div className="container">
       {error ? (
-        <EmptyPage />
+        <InitialPage textContent="User not found" pageIcon={userIcon} />
       ) : (
         <div>
-          <div className="page-wrapper">
+          <div className={pageWrapperClass}>
             <div className="main-page-wrapper">
               <div className="main-page-image">
                 <img src={context.avatar_url} alt="avatar" />
@@ -141,11 +121,11 @@ function MainPage({ search }) {
               </ul>
             </div>
           </div>
-          {items.length === 0 ? null : (
+          {context.public_repos < pagesSise ? null : (
             <div className="page-wrapper-pagination">
               <h3>
-                {itemsOfTotalStart}-{itemsOfTotalEnd} of {context.public_repos}{" "}
-                items
+                {itemsOfTotalStart}-{itemsOfTotalStart + items.length} of{" "}
+                {context.public_repos} items
               </h3>
               <nav className="pagination">
                 <ReactPaginate
@@ -171,6 +151,5 @@ function MainPage({ search }) {
     </div>
   );
 }
-// }
 
 export default MainPage;
