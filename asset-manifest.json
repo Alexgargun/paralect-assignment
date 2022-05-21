@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/paralect-assignment/static/css/main.d52865b3.css",
-    "main.js": "/paralect-assignment/static/js/main.e72cdb8a.js",
+    "main.js": "/paralect-assignment/static/js/main.27e0b985.js",
     "static/media/Logo.svg": "/paralect-assignment/static/media/Logo.1ee5d17ed4c57bd108a057783e8b165a.svg",
     "static/media/folovers.svg": "/paralect-assignment/static/media/folovers.fdce70b4d370c3a2740983e9cacf030c.svg",
     "static/media/initial-page-search.svg": "/paralect-assignment/static/media/initial-page-search.5d641b04cc9e3677440997256a3821c1.svg",
@@ -12,10 +12,10 @@
     "static/media/arrow-left.svg": "/paralect-assignment/static/media/arrow-left.a2ace37f6cae7bb8385c.svg",
     "static/media/arrow-right.svg": "/paralect-assignment/static/media/arrow-right.a0a4547543ae0aca02d6.svg",
     "main.d52865b3.css.map": "/paralect-assignment/static/css/main.d52865b3.css.map",
-    "main.e72cdb8a.js.map": "/paralect-assignment/static/js/main.e72cdb8a.js.map"
+    "main.27e0b985.js.map": "/paralect-assignment/static/js/main.27e0b985.js.map"
   },
   "entrypoints": [
     "static/css/main.d52865b3.css",
-    "static/js/main.e72cdb8a.js"
+    "static/js/main.27e0b985.js"
   ]
 }
