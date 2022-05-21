@@ -11,13 +11,16 @@ function MainPage({ search }) {
   const [context, setContext] = useState([]);
   const [items, setItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
-  const [pageOffset, setPageOffset] = useState(1);
+  const [pageOffset, setPageOffset] = useState(0);
   const [itemsOfTotalStart, setItemsOfTotalStart] = useState(0);
   const pagesSise = 4;
+  console.log(pageOffset);
 
   useEffect(() => {
     fetch(
-      `https://api.github.com/users/${search}/repos?per_page=4&page=${pageOffset}`
+      `https://api.github.com/users/${search}/repos?per_page=4&page=${
+        pageOffset + 1
+      }`
     )
       .then((res) => {
         if (!res.ok) {
@@ -30,7 +33,7 @@ function MainPage({ search }) {
           setIsLoaded(true);
           setItems(result);
           setError(null);
-          setItemsOfTotalStart(pagesSise * pageOffset - 4);
+          setItemsOfTotalStart(pagesSise * (pageOffset + 1) - pagesSise);
         },
 
         (error) => {
@@ -53,6 +56,7 @@ function MainPage({ search }) {
           setIsLoaded(true);
           setContext(result);
           setError(null);
+          setPageOffset(0);
           setPageCount(Math.ceil(result.public_repos / pagesSise));
         },
 
@@ -65,8 +69,10 @@ function MainPage({ search }) {
   }, [search, pageCount]);
 
   const handlePageClick = (event) => {
-    setPageOffset(event.selected + 1);
+    setPageOffset(event.selected);
   };
+
+  console.log(pageOffset);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -135,6 +141,7 @@ function MainPage({ search }) {
                   pageRangeDisplayed={3}
                   marginPagesDisplayed={1}
                   pageCount={pageCount}
+                  forcePage={pageOffset}
                   previousLabel="<"
                   renderOnZeroPageCount={null}
                   activeClassName="button-selected"
